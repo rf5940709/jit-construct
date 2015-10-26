@@ -83,12 +83,18 @@ int main(int argc, char *argv[])
 			// Each loop gets two pclabels: at the beginning and end.
 			// We store pclabel offsets in a stack to link the loop
 			// begin and end together.
-			maxpc += 2;
-			*top++ = maxpc;
-			dasm_growpc(&state, maxpc);
-			|  cmp  byte [PTR], 0
-			|  je   =>(maxpc-2)
-			|=>(maxpc-1):
+			if(*(p + 1) == '-' && *(p + 2) == ']') { 
+                        	|  mov byte [PTR], 0
+				p += 2;
+			}
+			else {
+				maxpc += 2;
+				*top++ = maxpc;
+				dasm_growpc(&state, maxpc);
+				|  cmp  byte [PTR], 0
+				|  je   =>(maxpc-2)
+				|=>(maxpc-1):
+			}
 			break;
 		case ']':
 			if (top == pcstack) err("Unmatched ']'");
