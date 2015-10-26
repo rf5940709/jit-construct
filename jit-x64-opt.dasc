@@ -32,6 +32,17 @@ int pointer_(char** p)
 	(*p)--;
 	return value;
 }
+int value_(char** p)
+{
+	int value = 0;
+	while(**p == '+' || **p == '-'){
+		if(**p == '+') value++;
+		else if(**p == '-') value--;
+		(*p)++;
+	}
+	(*p)--;
+	return value;
+}
 int main(int argc, char *argv[])
 {
 	if (argc < 2) err("Usage: jit-x64 <inputfile>");
@@ -55,10 +66,9 @@ int main(int argc, char *argv[])
 			|  add  PTR, value
 			break;
 		case '+':
-			|  inc  byte [PTR]
-			break;
 		case '-':
-			|  dec  byte [PTR]
+			value = value_(&p);
+			|  add  byte[PTR], value
 			break;
 		case '.':
 			|  movzx edi, byte [PTR]
