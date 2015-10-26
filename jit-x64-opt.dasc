@@ -87,6 +87,13 @@ int main(int argc, char *argv[])
                         	|  mov byte [PTR], 0
 				p += 2;
 			}
+			else if(*(p + 1) == '>' && *(p + 2) == '+' &&
+				 *(p + 3) == '<' && *(p + 4) == '-' && *(p + 5) == ']'){
+				|  mov al, byte [PTR]
+				|  add byte [PTR+1], al
+				|  mov byte [PTR], 0
+                                p += 5;
+			}
 			else {
 				maxpc += 2;
 				*top++ = maxpc;
