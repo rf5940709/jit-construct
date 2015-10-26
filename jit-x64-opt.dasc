@@ -21,7 +21,17 @@
 
 #define Dst &state
 #define MAX_NESTING 256
-
+int pointer_(char** p)
+{
+	int value = 0;
+	while(**p == '>' || **p == '<'){
+		if(**p == '>') value++;
+		else if(**p == '<') value--;
+		(*p)++;
+	}
+	(*p)--;
+	return value;
+}
 int main(int argc, char *argv[])
 {
 	if (argc < 2) err("Usage: jit-x64 <inputfile>");
@@ -29,6 +39,7 @@ int main(int argc, char *argv[])
 	initjit(&state, actions);
 
 	unsigned int maxpc = 0;
+	int value; 
 	int pcstack[MAX_NESTING];
 	int *top = pcstack, *limit = pcstack + MAX_NESTING;
 
@@ -39,10 +50,9 @@ int main(int argc, char *argv[])
 	for (char *p = read_file(argv[1]); *p; p++) {
 		switch (*p) {
 		case '>':
-			|  inc  PTR
-			break;
 		case '<':
-			|  dec  PTR
+			value = pointer_(&p);
+			|  add  PTR, value
 			break;
 		case '+':
 			|  inc  byte [PTR]
